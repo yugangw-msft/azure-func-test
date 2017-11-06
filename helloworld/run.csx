@@ -19,7 +19,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     client.DefaultRequestHeaders.Add("Secret", Environment.GetEnvironmentVariable("MSI_SECRET"));
     var resource = "https://management.azure.com/";
     var apiversion = "2017-09-01";
-    var response = client.GetAsync(String.Format("{0}/?resource={1}&api-version={2}", Environment.GetEnvironmentVariable("MSI_ENDPOINT"), resource, apiversion));
+    var response = client.GetAsync(String.Format("{0}/?resource={1}&api-version={2}", Environment.GetEnvironmentVariable("MSI_ENDPOINT"), resource, apiversion)).Result;
     var content = response.Content.ReadAsStringAsync().Result;
 
     // Set name to query string or body data
