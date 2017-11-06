@@ -19,14 +19,13 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     client.DefaultRequestHeaders.Add("Secret", Environment.GetEnvironmentVariable("MSI_SECRET"));
     var resource = "https://management.azure.com/";
     var apiversion = "2017-09-01";
-    var task = client.GetAsync(String.Format("{0}/?resource={1}&api-version={2}", Environment.GetEnvironmentVariable("MSI_ENDPOINT"), resource, apiversion));
-    task.Wait();
-    var result = task.Result;
+    var response = client.GetAsync(String.Format("{0}/?resource={1}&api-version={2}", Environment.GetEnvironmentVariable("MSI_ENDPOINT"), resource, apiversion));
+    var content = response.Content.ReadAsStringAsync().Result;
 
     // Set name to query string or body data
     name = name ?? data?.name;
 
     return name == null
         ? req.CreateResponse(HttpStatusCode.BadRequest, "Please pass a name on the query string or in the request body")
-        : req.CreateResponse(HttpStatusCode.OK, "Hello " + name); // + ". THE MSI ENDPOINT is " + endpoint
+        : req.CreateResponse(HttpStatusCode.OK, "Token:" + content); // + ". THE MSI ENDPOINT is " + endpoint
 }
