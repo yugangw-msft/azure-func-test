@@ -15,7 +15,13 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     dynamic data = await req.Content.ReadAsAsync<object>();
 
     // Read MSI related information
-    var endpoint = Environment.GetEnvironmentVariable("MSI_ENDPOINT");
+    HttpClient client = new HttpClient();
+    client.DefaultRequestHeaders.Add("Secret", Environment.GetEnvironmentVariable("MSI_SECRET"));
+    var resource = "https://management.azure.com/";
+    var apiversion = "2017-09-01";
+    var task = client.Get(String.Format("{0}/?resource={1}&api-version={2}", Environment.GetEnvironmentVariable("MSI_ENDPOINT"), resource, apiversion));
+    task.Wait();
+    var result = task.Result;
 
     // Set name to query string or body data
     name = name ?? data?.name;
